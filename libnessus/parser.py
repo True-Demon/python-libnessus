@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 import xml.etree.ElementTree as ET
+from libnessus.exceptions import *
 from libnessus.objects import NessusReportHost, NessusReportItem, NessusReport
+
 
 
 class NessusParser(object):
@@ -73,7 +75,10 @@ class NessusParser(object):
 
         _vuln_list = []
         for report_item in root.findall("ReportItem"):
-            _new_item = cls.parse_reportitem(report_item)
+            try:
+                _new_item = cls.parse_reportitem(report_item)
+            except MissingAttribute:
+                continue
             _vuln_list.append(_new_item)
 
         return NessusReportHost(_dhp, _vuln_list)
